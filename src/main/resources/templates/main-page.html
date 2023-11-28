@@ -22,7 +22,7 @@
         }
     </style>
 </head>
-<body>
+<body th:onload="btnClick();">
 
 <nav class="navbar navbar-expand-lg navbar-dark black" style="border-bottom: gray 0.05em solid">
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -35,6 +35,9 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/main/showCalendar}" style="font-size: 2em">Calendar</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " th:href="@{/main/viewStatistics}" style="font-size: 2em">Statistics</a>
             </li>
         </ul>
 
@@ -59,7 +62,7 @@
                             <i class="fas fa-check-square me-1"></i>
                             <u>My Tasks</u>
                         </p>
-                        
+
                         <div class="pb-2">
                             <div class="card">
                                 <div class="card-body">
@@ -82,7 +85,7 @@
                                                 <option value="Life Skill">Life Skill</option>
                                                 <option value="Other">Other</option>
                                             </select>
-                                            
+
                                             <br>
                                             <label for="exampleFormControlInput2">Description:</label>
                                             <input type="text" th:field="${newTask.description}" class="form-control form-control-lg" id="exampleFormControlInput2"
@@ -176,16 +179,13 @@
                 </div>
             </div>
         </div>
-        
     </div>
 </section>
 
-
+<button style="visibility: hidden;" id="my-Btn" th:onclick="reminder([[${tasksName}]],[[${taskNumber}]] );"></button>
 <script>
     // create a function to update the date and time
     function updateDateTime() {
-      
-    
         // Parse our locale string to [date, time]
         var date = new Date().toLocaleString('en-US',{hour12:false}).split(" ");
 
@@ -234,19 +234,26 @@
     setInterval(updateDateTime, 3000);
 
 
+    const myBtn = document.getElementById("my-Btn");
+    const event = new Event('click');
+    function btnClick() {
+        myBtn.dispatchEvent(event);
+    }
+    function reminder(taskNames, numberOfTask) {
+        if(numberOfTask > 0) {
+            // push notification script
+            Notification.requestPermission().then(perm => {
+                if (perm === "granted") {
+                    new Notification("You have " + numberOfTask + " about to finish", {
+                        body: "The name of tasks: " + taskNames,
+                    });
+                }
+            })
+        }
+    }
 
-    
-</script>
-<script>
-          //push notification script
-          Notification.requestPermission().then((result) => {
-            new Notification("Example notfication", {body: "You have an upcoming task"});
-        if(result === "granted"){
-        new Notification("Example notfication", {body: "You have an upcoming task"}); // in notification title you can concat number of tasks with task to be " 2 tasks" and the body to be tasks labels
-        
-        
-       } 
-    })
+
+
 </script>
 </body>
 </html>
