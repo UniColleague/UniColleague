@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:C="http://www.w3.org/1999/xhtml"
+      xmlns:https="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+
+    <link rel="stylesheet" href="../static/profile.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="icon" href="https://www.cspm.org/wp-content/uploads/2020/04/Y-tile-e1588095271345.png" type="image/x-icon">
+
+    <style>
+        .avatar{
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+        }
+
+        .username{
+            font-size: 2em;
+            margin-left: 20px;
+            margin-bottom: 5px;
+        }
+
+
+        .black{
+            background-color: black;
+        }
+        .edit{
+            background-color: black;
+            color: white;
+            border: white 0.05em solid;
+            border-radius: 10rem;
+            padding: .45rem 1.25rem;
+            font-size: 2em;
+            margin-left: 550px;
+            position: absolute;
+            text-decoration: none;
+            margin-top: 50px;
+        }
+
+    </style>
+</head>
+<body class="black">
+
+        <nav class="navbar navbar-expand-lg navbar-dark black" style="border-bottom: gray 0.05em solid">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/main/home}" style="font-size: 2em">Main</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/main/profile}" style="font-size: 2em">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/main/showCalendar}" style="font-size: 2em">Calendar</a>
+                    </li>
+                </ul>
+                <form action="#" th:action="@{/logout}"
+                      method="post">
+
+                    <button type="submit" class="btn btn-danger" style="right: 0px;top: 5px; position: absolute">Logout</button>
+
+                </form>
+            </div>
+        </nav>
+
+        <!-- User info -->
+        <div class="container" style="display: flex; align-items: center; justify-content: center">
+  <div th:object="${user}">
+        <div class="black" style="width: 1000px;padding: 15px;border: gray 0.1em solid;
+            padding: 15px; color: white">
+                <p>
+                    <img th:src="*{image}" class="avatar" >
+                    <a  th:href="@{/main/showEditForm}" class="edit">Edit account</a>
+                </p>
+
+                <br>
+                <div>
+                    <p th:text="'@' + (*{username})" style="color: gray; margin-left: 20px; font-size: 1.2em"></p>
+                    <br>
+                </div>
+        </div>
+
+
+   </div>
+
+       </div>
+
+</body>
+</html>
