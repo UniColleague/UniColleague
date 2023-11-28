@@ -11,7 +11,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 
@@ -60,7 +64,7 @@ public class MainController {
 
 
         User theUser = new User(user.getUsername(),"{noop}"+user.getPassword(),1,user.getEmail());
-        System.out.println("It works!");
+
         theUser.setImage("https://cdn.analyticsvidhya.com/wp-content/uploads/2023/04/ai-generated-gba2dce9e3_1920_xMPNobD.jpg");
         userService.save(theUser);
         Role role = new Role( "ROLE_USER",user.getUsername());
@@ -72,13 +76,36 @@ public class MainController {
     }
 
     @GetMapping("/home")
-    public String homePage(Model theModel, HttpServletRequest request){
+    public String homePage(Model theModel, HttpServletRequest request) throws ParseException {
         User user = userService.findUserByUsername(getName(request));
-        //List<Task> tasks = taskService.getAllTasks();
+
         boolean complete = false;
         theModel.addAttribute("complete", complete);
         theModel.addAttribute("newTask", new Task());
         theModel.addAttribute("tasks", user.getTasks());
+
+        LocalDateTime now = LocalDateTime.now();
+
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+        List<Task> tasks = taskService.getAllTasks();
+        int numberOfTasks = 0;
+        String[] tasksName = new String[tasks.size()];
+        LocalDateTime date;
+        int j = 0;
+        for(int i = 0; i < tasks.size(); i++){
+             date = LocalDateTime.parse(tasks.get(i).getEndDate()).minusHours(4);
+             int ct = date.compareTo(now);
+
+             if (ct < 0 || ct == 0){
+                 numberOfTasks++;
+                 tasksName[j] = tasks.get(i).getTitle();
+
+             }
+        }
+
+        theModel.addAttribute("taskNumber", numberOfTasks);
+        theModel.addAttribute("tasksName", tasksName);
+
 
         return "main-page";
     }
@@ -268,10 +295,9 @@ public class MainController {
 
     @PostMapping("/forgot-password-sc")
     public String processForgotPasswordForm(@ModelAttribute("emailUser") User email, Model model) {
-        System.out.println("dadadadas");
+
         User user = userService.findByEmail(email.getEmail());
-        System.out.println(user);
-        System.out.println(email.getEmail());
+
         if (user != null) {
             String token = userService.createPasswordResetToken(user);
             emailService.sendPasswordResetEmail(user, token);
@@ -295,17 +321,40 @@ public class MainController {
 
     @PostMapping("/reset-password2")
     public String processResetPasswordForm(@RequestParam String token, @ModelAttribute("passwordUser") User newPassword, Model model) {
-        System.out.println(newPassword);
-        if (userService.isPasswordResetTokenValid(token)) {
-            userService.resetPassword(token, newPassword.getPassword());
-            model.addAttribute("message", "Password reset successful");
-            return "redirect:/main/home";
-        } else {
-            model.addAttribute("error", "Invalid or expired token");
+        if(newPassword.getPassword().equals(newPassword.getEmail())) {
+            if (userService.isPasswordResetTokenValid(token)) {
+                userService.resetPassword(token, newPassword.getPassword());
+                model.addAttribute("message", true);
+                return "login-form";
+            } else {
+                model.addAttribute("error", "Invalid or expired token");
+            }
+        }
+        else {
+            model.addAttribute("error", "The passwords don't match!");
         }
 
         return "reset-password";
     }
+
+    @GetMapping("/viewStatistics")
+    public String viewStatistics(Model theModel){
+
+        int finished =0;
+        int unfinished = 0;
+        List<Task> tasks = taskService.getAllTasks();
+        for (int i = 0; i< tasks.size(); i++){
+            if(tasks.get(i).getCompleted())
+                finished++;
+            else
+                unfinished++;
+        }
+        theModel.addAttribute("finished", finished);
+        theModel.addAttribute("unfinished", unfinished);
+        return "viewStatistics";
+    }
+
+
 
 
 
