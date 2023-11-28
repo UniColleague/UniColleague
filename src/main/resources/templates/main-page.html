@@ -240,7 +240,7 @@
         myBtn.dispatchEvent(event);
     }
     function reminder(taskNames, numberOfTask) {
-        if(numberOfTask > 0) {
+        if(numberOfTask > 0 && numberOfTask != null) {
             // push notification script
             Notification.requestPermission().then(perm => {
                 if (perm === "granted") {
