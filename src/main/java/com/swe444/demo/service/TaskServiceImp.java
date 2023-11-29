@@ -61,4 +61,9 @@ public class TaskServiceImp implements TaskService{
     public void deleteTask(Task task) {
         taskDao1.delete(task);
     }
+
+    @Override
+    public List<Task> getAllTasks() {
+        return taskDao1.findAll();
+    }
 }
