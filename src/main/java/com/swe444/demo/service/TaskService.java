@@ -16,4 +16,6 @@ public interface TaskService {
     public void updateTask(Task task);
 
     public void deleteTask(Task task);
+
+    public List<Task> getAllTasks();
 }
