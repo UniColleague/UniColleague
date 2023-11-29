@@ -14,7 +14,7 @@ public class EmailService {
 
     public void sendPasswordResetEmail(User user, String token) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("creprkill@gmail.com");
+        message.setFrom("@gmail.com");
         message.setTo(user.getEmail());
         message.setSubject("Password Reset");
         message.setText("Click on the following link to reset your password: http://localhost:8080/main/reset-password?token=" + token);
