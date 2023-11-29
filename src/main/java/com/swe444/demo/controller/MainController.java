@@ -87,7 +87,7 @@ public class MainController {
         LocalDateTime now = LocalDateTime.now();
 
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-        List<Task> tasks = taskService.getAllTasks();
+        List<Task> tasks = userService.findUserByUsername(getName(request)).getTasks();
         int numberOfTasks = 0;
         String[] tasksName = new String[tasks.size()];
         LocalDateTime date;
@@ -98,7 +98,7 @@ public class MainController {
 
              if (ct < 0 || ct == 0){
                  numberOfTasks++;
-                 tasksName[j] = tasks.get(i).getTitle();
+                 tasksName[j++] = tasks.get(i).getTitle();
 
              }
         }
@@ -338,11 +338,11 @@ public class MainController {
     }
 
     @GetMapping("/viewStatistics")
-    public String viewStatistics(Model theModel){
+    public String viewStatistics(Model theModel,  HttpServletRequest request){
 
         int finished =0;
         int unfinished = 0;
-        List<Task> tasks = taskService.getAllTasks();
+        List<Task> tasks = userService.findUserByUsername(getName(request)).getTasks();
         for (int i = 0; i< tasks.size(); i++){
             if(tasks.get(i).getCompleted())
                 finished++;
